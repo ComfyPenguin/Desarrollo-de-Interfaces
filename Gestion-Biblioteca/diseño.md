@@ -1,5 +1,7 @@
 ```plantuml
 @startuml
+top to bottom direction
+
 abstract class Producto {
   +titulo: String
   +num_ejemplares: int

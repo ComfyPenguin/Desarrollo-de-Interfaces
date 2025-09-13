@@ -1,11 +1,16 @@
-class Administrador extends Persona{
-    constructor(cargo, nombre, dni){
+import {Usuario} from './usuario.js' 
+
+export class Administrador extends Usuario{
+    constructor(nombre, dni, cargo){
         super(nombre, dni)
         this.cargo = cargo
     }
 }
 
-const cargo = {
-  ADMINISTRADOR: 'Administrador',
-  AYUDANTE: 'Ayudante'
+export const CARGO = {
+    ADMINISTRADOR: 'Administrador',
+    AYUDANTE: 'Ayudante'
 };
+
+export const administradores = []
+
