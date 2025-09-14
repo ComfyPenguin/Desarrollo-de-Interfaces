@@ -1,7 +1,8 @@
 import { Revista } from "./productos/revista.js";
 import { Libro } from "./productos/libro.js";
 import { Pelicula } from "./productos/pelicula.js";
-
+import { Socio } from "./usuarios/socio.js";
+import { Administrador } from "./usuarios/administrador.js";
 
 export let biblioteca = {
     revistas: [],
@@ -9,37 +10,67 @@ export let biblioteca = {
     libros: []
 };
 
-// Libros
+export let usuarios = {
+    socios: [],
+    administradores: []
+};
+
+// Variables de entorno
 let libro = new Libro()
-libro.addLibro("Cien años de soledad", 5, "Gabriel García Márquez");
-libro.addLibro("Harry Potter y la piedra filosofal", 3, "J.K. Rowling");
+let pelicula = new Pelicula()
+let revista = new Revista()
+let admin = new Administrador();
+let socio = new Socio();
+
+// Función para mostrar todos los productos de la biblioteca
+function getBiblioteca(){
+    console.log("Biblioteca:");
+    libro.getLibros()
+    console.log();
+    pelicula.getPeliculas()
+    console.log();
+    revista.getRevistas()
+}
+
+// Libros
+libro.agregar("Harry Potter y la piedra filosofal", 3, "J.K. Rowling");
+libro.agregar("El nombre de la rosa", 4, "Umberto Eco");
 
 // Películas
-let pelicula = new Pelicula()
-pelicula.addPelicula("Jurassic Park", 4, "Steven Spielberg", "Aventura");
-pelicula.addPelicula("Inception", 2, "Christopher Nolan", "Ciencia ficción");
+pelicula.agregar("Inception", 2, "Christopher Nolan", "Ciencia ficción");
+pelicula.agregar("Interstellar", 3, "Christopher Nolan", "Ciencia ficción");
+pelicula.agregar("Titanic", 5, "James Cameron", "Romance");
 
 // Revistas
-let revista = new Revista()
-revista.addRevista("National Geographic", 6, "2025-09-01");
-revista.addRevista("TIME", 4, "2025-08-15");
+revista.agregar("National Geographic", 6, "01-09-2025");
+revista.agregar("Scientific American", 7, "10-07-2025");
+revista.agregar("Time Magazine", 5, "25-08-2025");
 
-console.log(biblioteca)
+// Administradores
+admin.registrar("Ana López", "12345678A", "Administrador");
+admin.registrar("Carlos Ruiz", "87654321B", "Ayudante");
+
+// Socios
+socio.registrar("María Gómez", "11223344C", []);
+socio.registrar("Carlos Martínez", "69696969M", []);
+
+// Préstamos
+revista.prestar("National Geographic", "11223344C");
+revista.prestar("National", "11223344C");
+revista.prestar("National Geographic", "11323344C");
+pelicula.prestar("Inception", "11223344C");
+libro.prestar("Harry Potter y la piedra filosofal", "11223344C")
+pelicula.prestar("Interstellar", "11223344C");
+
+// // console.log(usuarios.socios)
+console.log()
+getBiblioteca()
+
+console.log();
+
+pelicula.filtrarPelicula("Ciencia ficción");
+revista.filtrarRevistas("01-09-2025")
 /**
-Afegir un llibre a la biblioteca amb la informació del títol, autor i nombre d'exemplars disponibles.
-
-Afegir una pel·lícula a la biblioteca amb la informació del títol, director, gènere i nombre 
-d'exemplars disponibles.
-
-
-Afegir una revista a la biblioteca amb la informació del títol, la data de publicació i nombre d'exemplars disponibles.
-
-Afegir un soci amb el seu nom i DNI.
-
-Afegir un administrador amb el seu nom, DNI i càrrec.
-
-Prestar un recurs a un soci. Cal verificar que el recurs estiga disponible i que el soci no haja superat el límit de llibres prestats (per exemple, un màxim de 3 llibres per soci).
-
 Retornar un llibre.
 
 Mostrar una llista de tots els recursos, amb la possibilitat de filtrar per tipus. En el cas de pel·lícules s'haurà de filtrar també per gènere. En el cas de revista per any de publicació.
