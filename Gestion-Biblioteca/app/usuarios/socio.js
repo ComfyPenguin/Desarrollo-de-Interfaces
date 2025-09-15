@@ -1,12 +1,11 @@
-import {Usuario} from './usuario.js' 
-import {usuarios} from '../biblioteca.js'
+import {Usuario} from './usuario.js'
 
 export class Socio extends Usuario{
-    constructor(nombre, dni, matPrestados){
+    constructor(nombre, dni){
         super(nombre, dni)
         this._nombre = nombre;
         this._dni = dni;
-        this._matPrestados = matPrestados;
+        this._matPrestados = [];
     }
 
     toString() {
@@ -40,16 +39,4 @@ export class Socio extends Usuario{
     set matPrestados(value) {
         this._matPrestados = value;
     }
-
-    // Listar todos los socios de la biblioteca
-    getSocios(){
-        usuarios.socios.forEach(socio => {console.log(socio.toString())});
-    }
-
-    // Registrar un nuevo socio
-    registrar(nombre, dni, matPrestados){
-        let socio = new Socio(nombre, dni, matPrestados);
-        usuarios.socios.push(socio);
-    };
-
 }

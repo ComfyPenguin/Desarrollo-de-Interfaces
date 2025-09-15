@@ -23,14 +23,6 @@ export class Producto {
     set numEjemplares(value) {
         this._numEjemplares = value;
     }
-
-    agregar() {
-        throw new Error("Este método debe ser sobrescrito en las subclases.");
-    }
-
-    prestar() {
-        throw new Error("Este método debe ser sobrescrito en las subclases.");
-    }
 }
 
 // Límite de productos prestados que puede tener un socio

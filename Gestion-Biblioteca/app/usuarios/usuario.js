@@ -22,8 +22,4 @@ export class Usuario {
     set dni(value) {
         this._dni = value;
     }
-
-    registrar() {
-        throw new Error("Este método debe ser sobrescrito en las subclases.");
-    }
 }

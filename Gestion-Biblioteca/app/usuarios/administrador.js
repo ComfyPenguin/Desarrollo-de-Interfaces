@@ -1,5 +1,4 @@
-import {Usuario} from './usuario.js' 
-import {usuarios} from '../biblioteca.js'
+import {Usuario} from './usuario.js'
 
 export class Administrador extends Usuario{
     constructor(nombre, dni, cargo){
@@ -36,26 +35,5 @@ export class Administrador extends Usuario{
     set cargo(value) {
         this._cargo = value;
     }
-
-    // Listar todos los administradores de la biblioteca
-    getAdmins(){
-        usuarios.administradores.forEach(admin => {console.log(admin.toString())});
-    }
-
-    // Registrar un nuevo administrador
-    registrar(nombre, dni, cargo){
-        if (cargo !== CARGO.ADMINISTRADOR && cargo !== CARGO.AYUDANTE) {
-            throw new Error("Cargo inválido. Debe ser 'Administrador' o 'Ayudante'.");
-        }
-        
-        let admin = new Administrador(nombre, dni, cargo);
-        usuarios.administradores.push(admin);
-    };
 }
-
-// Constantes para los cargos de los administradores
-export const CARGO = {
-    ADMINISTRADOR: 'Administrador',
-    AYUDANTE: 'Ayudante'
-};
 

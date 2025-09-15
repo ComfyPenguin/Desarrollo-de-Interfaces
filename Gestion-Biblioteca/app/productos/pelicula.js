@@ -1,5 +1,4 @@
-import {Producto, LIMITE_MATS} from './producto.js'
-import {biblioteca, usuarios} from '../biblioteca.js'
+import {Producto} from './producto.js'
 
 export class Pelicula extends Producto{
     constructor(titulo, numEjemplares, director, genero){
@@ -46,50 +45,5 @@ export class Pelicula extends Producto{
         this._genero = value;
     }
 
-    // Listar todas las películas de la biblioteca
-    getPeliculas(){
-        biblioteca.peliculas.forEach( peli => console.log(peli.toString()));
-    }
-
-    // Filtrar películas por género
-    filtrarPelicula(genero) {
-        let peliculasFiltradas = biblioteca.peliculas.filter(peli => peli.genero === genero);
-        peliculasFiltradas.forEach(peli => console.log(peli.toString()));
-    }
-
-    // Añadir película a la biblioteca
-    agregar(titulo, numEjemplares, director, genero) {
-        let pelicula = new Pelicula(titulo, numEjemplares, director, genero);
-        biblioteca.peliculas.push(pelicula);
-    }
-
-    // Prestar una película a un socio
-    prestar(titulo, dniSocio) {
-        // Buscar la película
-        const pelicula = biblioteca.peliculas.find(pelicula => pelicula.titulo === titulo && pelicula.numEjemplares > 0);
-        if (!pelicula) {
-            console.log("Película no disponible.");
-            return false;
-        }
-
-        // Buscar al socio
-        const socio = usuarios.socios.find(socio => socio.dni === dniSocio);
-        if (!socio) {
-            console.log("Socio no encontrado.");
-            return false;
-        }
-
-        // Límite de materiales prestados
-        if (socio.matPrestados.length === LIMITE_MATS) {
-            console.log("El socio ya tiene el máximo de materiales prestados.");
-            return false;
-        }
-
-        // Prestar el libro
-        pelicula.numEjemplares -= 1;
-        socio.matPrestados.push(pelicula.titulo);
-        console.log(`Película "${pelicula.titulo}" prestado a ${socio.nombre}.`);
-        return true;
-    }
 }
 

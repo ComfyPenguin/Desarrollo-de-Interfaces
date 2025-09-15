@@ -1,83 +1,178 @@
-import { Revista } from "./productos/revista.js";
-import { Libro } from "./productos/libro.js";
-import { Pelicula } from "./productos/pelicula.js";
-import { Socio } from "./usuarios/socio.js";
-import { Administrador } from "./usuarios/administrador.js";
+import {Pelicula} from "./productos/pelicula.js";
+import {Socio} from "./usuarios/socio.js";
+import {Libro} from "./productos/libro.js";
+import {Revista} from "./productos/revista.js";
+import {Administrador} from "./usuarios/administrador.js";
+import {LIMITE_MATS} from "./productos/producto.js";
 
-export let biblioteca = {
-    revistas: [],
-    peliculas: [],
-    libros: []
-};
 
-export let usuarios = {
-    socios: [],
-    administradores: []
-};
+export class Biblioteca {
+    constructor() {
+        this.productos = {
+            revistas: [],
+            peliculas: [],
+            libros: []
+        };
+        this.usuarios = {
+            socios: [],
+            administradores: []
+        };
+    }
 
-// Variables de entorno
-let libro = new Libro()
-let pelicula = new Pelicula()
-let revista = new Revista()
-let admin = new Administrador();
-let socio = new Socio();
+    getSocio(dni) {
+        return this.usuarios.socios.find(socio => socio.dni === dni);
+    }
 
-// Función para mostrar todos los productos de la biblioteca
-function getBiblioteca(){
-    console.log("Biblioteca:");
-    libro.getLibros()
-    console.log();
-    pelicula.getPeliculas()
-    console.log();
-    revista.getRevistas()
+    getAdmin(dni) {
+        return this.usuarios.administradores.find(admin => admin.dni === dni);
+    }
+
+    getLibro(titulo) {
+        return this.productos.libros.find(libro => libro.titulo === titulo);
+    }
+
+    getPelicula(titulo) {
+        return this.productos.peliculas.find(peli => peli.titulo === titulo);
+    }
+
+    getRevista(titulo) {
+        return this.productos.revistas.find(revista => revista.titulo === titulo);
+    }
+
+    getProductos(){
+        console.log("Libros:");
+        this.productos.libros.forEach(libro => console.log(libro.toString()));
+        console.log("Revistas:");
+        this.productos.revistas.forEach(revista => console.log(revista.toString()));
+        console.log("Películas:");
+        this.productos.peliculas.forEach(peli => console.log(peli.toString()));
+    }
+
+    getUsuarios(){
+        console.log("Usuarios:");
+        this.usuarios.socios.forEach(socio => console.log(socio.toString()));
+        this.usuarios.administradores.forEach(admin => console.log(admin.toString()));
+    }
+
+    getSocios(){
+        console.log("Socios:");
+        this.usuarios.socios.forEach(socio => console.log(socio.toString()));
+    }
+
+    getAdmins(){
+        console.log("Administradores:");
+        this.usuarios.administradores.forEach(admin => console.log(admin.toString()));
+    }
+
+    // Registrar usuarios
+    registrarAdmin(nombre, dni, cargo){
+        let admin = new Administrador(nombre, dni, cargo);
+        this.usuarios.administradores.push(admin);
+    };
+
+    registrarSocio(nombre, dni, matPrestados){
+        let socio = new Socio(nombre, dni, matPrestados);
+        this.usuarios.socios.push(socio);
+    };
+
+    // Añadir productos
+    agregarLibro(titulo, numEjemplares, autor) {
+        let libro = new Libro(titulo, numEjemplares, autor);
+        this.productos.libros.push(libro);
+    };
+
+    agregarPelicula(titulo, numEjemplares, director, genero) {
+        let pelicula = new Pelicula(titulo, numEjemplares, director, genero);
+        this.productos.peliculas.push(pelicula);
+    }
+
+    agregarRevista(titulo, numEjemplares, fechaPublicacion) {
+        let revista = new Revista(titulo, numEjemplares, fechaPublicacion);
+        this.productos.revistas.push(revista);
+    }
+
+    // Filtros
+    filtrarRevistas(fechaPublicacion) {
+        let revistaFiltrada = this.productos.revistas.filter(revista => revista.fechaPublicacion === fechaPublicacion);
+        revistaFiltrada.forEach(revista => console.log(revista.toString()));
+    }
+
+    filtrarPelicula(genero) {
+        let peliculasFiltradas = this.productos.peliculas.filter(peli => peli.genero === genero);
+        peliculasFiltradas.forEach(peli => console.log(peli.toString()));
+    }
+
+    // Prestar material a un socio
+    prestarProducto(titulo, dniSocio, tipoMaterial) {
+        // Buscar
+        let producto;
+        switch (tipoMaterial) {
+            case "libro":
+                producto = this.getLibro(titulo);
+                break;
+            case "revista":
+                producto = this.getRevista(titulo);
+                break;
+            case "pelicula":
+                producto = this.getPelicula(titulo);
+                break;
+        }
+
+        // Verificar disponibilidad
+        if (producto === undefined) {
+            console.log("Material no encontrado");
+            return false;
+        }
+
+        // Buscar al socio
+        if (!this.getSocio(dniSocio)) {
+            console.log("Socio no encontrado.");
+            return false;
+        }
+
+        // Límite de materiales prestados
+        if (this.getSocio(dniSocio).matPrestados.length === LIMITE_MATS) {
+            console.log(`${this.getSocio(dniSocio).nombre} ya tiene el máximo de materiales prestados.`);
+            return false;
+        }
+
+        // Prestar el libro
+        producto.numEjemplares -= 1;
+        this.getSocio(dniSocio).matPrestados.push(producto.titulo);
+        console.log(`Película "${producto.titulo}" prestado a ${this.getSocio(dniSocio).nombre}.`);
+        return true;
+    }
+
+    devolverProducto(titulo, dniSocio) {
+        for (let socio of this.usuarios.socios) {
+            if (socio.dni === dniSocio) {
+                if (socio.matPrestados.includes(titulo)) {
+                    const index = socio.matPrestados.indexOf(titulo);
+                    if (index > -1) {
+                        socio.matPrestados.splice(index, 1);
+                        if (this.getLibro(titulo)) {
+                            this.getLibro(titulo).numEjemplares += 1;
+                        } else if (this.getRevista(titulo)) {
+                            this.getRevista(titulo).numEjemplares += 1;
+                        } else if (this.getPelicula(titulo)) {
+                            this.getPelicula(titulo).numEjemplares += 1;
+                        }
+                        console.log(`'${titulo}' devuelto por ${socio.nombre}.`);
+                        return true;
+                    }
+                } else {
+                    console.log(`${socio.nombre} no tiene prestado el material '${titulo}'.`);
+                    return false;
+                }
+            }
+        }
+        console.log(`Socio con DNI ${dniSocio} no encontrado.`);
+    }
+
+    mostrarRecursosPrestados(){
+        this.usuarios.socios.forEach(socio => {
+            console.log(`Socio: ${socio.nombre}, Materiales prestados: ${socio.matPrestados.join(", ") || "Ninguno"}`);
+        });
+    }
+
 }
-
-// Libros
-libro.agregar("Harry Potter y la piedra filosofal", 3, "J.K. Rowling");
-libro.agregar("El nombre de la rosa", 4, "Umberto Eco");
-
-// Películas
-pelicula.agregar("Inception", 2, "Christopher Nolan", "Ciencia ficción");
-pelicula.agregar("Interstellar", 3, "Christopher Nolan", "Ciencia ficción");
-pelicula.agregar("Titanic", 5, "James Cameron", "Romance");
-
-// Revistas
-revista.agregar("National Geographic", 6, "01-09-2025");
-revista.agregar("Scientific American", 7, "10-07-2025");
-revista.agregar("Time Magazine", 5, "25-08-2025");
-
-// Administradores
-admin.registrar("Ana López", "12345678A", "Administrador");
-admin.registrar("Carlos Ruiz", "87654321B", "Ayudante");
-
-// Socios
-socio.registrar("María Gómez", "11223344C", []);
-socio.registrar("Carlos Martínez", "69696969M", []);
-
-// Préstamos
-revista.prestar("National Geographic", "11223344C");
-revista.prestar("National", "11223344C");
-revista.prestar("National Geographic", "11323344C");
-pelicula.prestar("Inception", "11223344C");
-libro.prestar("Harry Potter y la piedra filosofal", "11223344C")
-pelicula.prestar("Interstellar", "11223344C");
-
-// // console.log(usuarios.socios)
-console.log()
-getBiblioteca()
-
-console.log();
-
-pelicula.filtrarPelicula("Ciencia ficción");
-revista.filtrarRevistas("01-09-2025")
-/**
-Retornar un llibre.
-
-Mostrar una llista de tots els recursos, amb la possibilitat de filtrar per tipus. En el cas de pel·lícules s'haurà de filtrar també per gènere. En el cas de revista per any de publicació.
-
-Mostrar una llista de tots els socis.
-
-Mostrar una llista de tots els administradors de préstecs.
-
-Mostrar una llista amb la informació sobre quins recursos estan prestats a cada soci.
-*/

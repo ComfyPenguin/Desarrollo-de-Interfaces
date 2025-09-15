@@ -21,7 +21,7 @@ Producto <|-- Libro
 Producto <|-- Revista
 Producto <|-- Película
 
-abstract class Persona {
+abstract class Usuario {
   +nombre: String
   +dni: String
 }
@@ -34,6 +34,6 @@ class Administrador{
   +cargo: Enum{Administrador, Ayudante}
 } 
 
-Persona <|-- Socio
-Persona <|-- Administrador
+Usuario <|-- Socio
+Usuario <|-- Administrador
 @enduml
